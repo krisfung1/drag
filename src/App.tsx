@@ -1,16 +1,15 @@
-import { DndContext, closestCenter, useDndContext, DragOverlay } from '@dnd-kit/core';
+import { DndContext, closestCenter, DragOverlay } from '@dnd-kit/core';
 import { arrayMove, SortableContext, useSortable, rectSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useState, useEffect, useRef } from 'react';
 import './App.css';
-import { restrictToFirstScrollableAncestor, restrictToParentElement } from '@dnd-kit/modifiers';
+import { restrictToParentElement } from '@dnd-kit/modifiers';
 import React from 'react'; // Added missing import for React
 
 const COLUMN_COUNT = 3;
 const GRID_WIDTH = 1000;
 const GRID_GAP = 16;
 const COLUMN_WIDTH = Math.floor((GRID_WIDTH - (COLUMN_COUNT - 1) * GRID_GAP) / COLUMN_COUNT);
-const COLUMN_WIDTHS = [COLUMN_WIDTH, COLUMN_WIDTH * 2 + GRID_GAP];
 
 const GRID_HEIGHT = 800;
 const HEADER_HEIGHT = 48; // approx height for h2
@@ -39,7 +38,7 @@ const initialCards = Array.from({ length: 9 }, (_, i) => ({
   color: pastelColors[i % pastelColors.length],
 }));
 
-function SortableItem({ id, content, index, colSpan, onResize, color, activeId }: { id: string; content: string; index: number; colSpan: number; onResize: (newColSpan: number) => void; color: string; activeId?: string }) {
+function SortableItem({ id, content, colSpan, onResize, color, activeId }: { id: string; content: string; colSpan: number; onResize: (newColSpan: number) => void; color: string; activeId?: string }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -261,12 +260,11 @@ function App() {
               overflow: 'auto',
             }}
           >
-            {cards.map((card, idx) => (
+            {cards.map((card) => (
               <SortableItem
                 key={card.id}
                 id={card.id}
                 content={card.content}
-                index={idx}
                 colSpan={card.colSpan}
                 onResize={newColSpan => handleResize(card.id, newColSpan)}
                 color={card.color}
